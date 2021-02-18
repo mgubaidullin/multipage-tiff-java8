@@ -23,7 +23,7 @@ public class ImageRoute extends RouteBuilder implements Processor {
 
     @Override
     public void configure() throws Exception {
-        from("file:images_tiff?noop=true&idempotent=true")
+        from("file:/data/tifs?noop=true&idempotent=true")
                 .process(this::process)
                 .split(body())
                 .to("file:images_png?fileName=${header.CamelFileNameOnly}_${header.CamelSplitIndex}.png")
