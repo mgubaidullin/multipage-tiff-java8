@@ -1,0 +1,38 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: multipage-tiff-java-8
+  labels:
+    app: multipage-tiff-java-8
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multipage-tiff-java-8
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: multipage-tiff-java-8
+        deploymentconfig: multipage-tiff-java-8
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: tifs
+            defaultMode: 420
+      containers:
+        - name: multipage-tiff-java-8
+          image: ... # ex. image-registry.openshift-image-registry.svc:5000/demo/multipage-tiff-java8:latest
+          env:
+            - name: image.folder.tiff
+              value: "/data/tifs"
+            - name: image.folder.png
+              value: "/data/png"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /data/tifs
