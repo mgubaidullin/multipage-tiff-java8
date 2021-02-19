@@ -16,11 +16,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
 public class ImageRoute extends RouteBuilder implements Processor {
+
+    Logger LOG = Logger.getLogger(ImageRoute.class.getName());
 
     @Value("${image.folder.tiff}")
     private String folderTiff;
@@ -30,6 +34,9 @@ public class ImageRoute extends RouteBuilder implements Processor {
 
     @Override
     public void configure() throws Exception {
+
+        LOG.log(Level.INFO, "Reading tiff from {0}", folderTiff);
+        LOG.log(Level.INFO, "Writing png to {0}", folderPng);
 
         fromF("file:%s?noop=true&idempotent=true", folderTiff)
                 .process(this::process)
