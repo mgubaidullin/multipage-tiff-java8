@@ -3,6 +3,7 @@ package org.example.multipagetiffjava8;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -21,12 +22,19 @@ import java.util.stream.IntStream;
 @Component
 public class ImageRoute extends RouteBuilder implements Processor {
 
+    @Value("${image.folder.tiff}")
+    private String folderTiff;
+
+    @Value("${image.folder.png}")
+    private String folderPng;
+
     @Override
     public void configure() throws Exception {
-        from("file:images_tiff?noop=true&idempotent=true")
+
+        fromF("file:%s?noop=true&idempotent=true", folderTiff)
                 .process(this::process)
                 .split(body())
-                .to("file:images_png?fileName=${header.CamelFileNameOnly}_${header.CamelSplitIndex}.png")
+                .toF("file:%s?fileName=${header.CamelFileNameOnly}_${header.CamelSplitIndex}.png", folderPng)
                 .log("Page ${header.CamelSplitIndex} of file ${header.CamelFileNameOnly} processed");
     }
 
